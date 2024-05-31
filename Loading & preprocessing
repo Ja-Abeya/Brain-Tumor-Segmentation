@@ -1,0 +1,28 @@
+# Load a sample NIfTI file
+def load_nifti_file(filepath):
+    nifti_img = nib.load(filepath)
+    return nifti_img.get_fdata()
+
+# Preprocess the data to the required shape
+def preprocess_data(volume, target_shape=(128, 128, 128)):
+    # Resize or crop/pad the volume to the target shape
+    volume = np.resize(volume, target_shape)
+    volume = np.expand_dims(volume, axis=-1)  # Add channel dimension
+    return volume
+
+# Example usage
+volume_path = '~/datasets/msd/path_to_volume.nii'
+label_path = '~/datasets/msd/path_to_label.nii'
+
+volume = load_nifti_file(volume_path)
+label = load_nifti_file(label_path)
+
+volume = preprocess_data(volume)
+label = preprocess_data(label)
+
+# Assuming binary classification, convert labels to categorical
+label = to_categorical(label, num_classes=2)
+
+# Create datasets (this is just an example, you'll need to iterate over all your data)
+x_train = np.array([volume])
+y_train = np.array([label])
