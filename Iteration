@@ -1,0 +1,27 @@
+def load_and_preprocess_data(images_dir, labels_dir, target_shape=(128, 128, 128)):
+    image_files = sorted(os.listdir(images_dir))
+    label_files = sorted(os.listdir(labels_dir))
+    
+    x_data = []
+    y_data = []
+    
+    for img_file, lbl_file in zip(image_files, label_files):
+        img_path = os.path.join(images_dir, img_file)
+        lbl_path = os.path.join(labels_dir, lbl_file)
+        
+        image = load_nifti_file(img_path)
+        label = load_nifti_file(lbl_path)
+        
+        image = preprocess_data(image, target_shape)
+        label = preprocess_data(label, target_shape)
+        
+        label = to_categorical(label, num_classes=2)
+        
+        x_data.append(image)
+        y_data.append(label)
+    
+    return np.array(x_data), np.array(y_data)
+
+x_train, y_train = load_and_preprocess_data(images_dir, labels_dir)
+
+model.fit(x_train, y_train, epochs=10, batch_size=1, validation_split=0.1)
